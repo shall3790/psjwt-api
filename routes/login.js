@@ -13,8 +13,16 @@ var router = express.Router();
 router.post('/', function(req, res, next) {
     console.log('body: '+ JSON.stringify(req.body));
     
-    var user = req.body;
-    
+    req.user = req.body;
+    User.findOne({email: req.user.email}, function(err, user) {
+        if(err) throw err;
+        
+        user.comparePassword(req.user.password, function(err, isMatch) {
+            if(err) throw err;
+            
+        });
+        
+    });
     var newUser = new User.model({
         email: user.email,
         password: user.password
